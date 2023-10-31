@@ -37,6 +37,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
+
 import edu.utsa.cs3443.ysw932_lab4.R;
 import edu.utsa.cs3443.ysw932_lab4.model.Trivia;
 public class TrickController implements View.OnClickListener {
@@ -68,12 +71,14 @@ public class TrickController implements View.OnClickListener {
     public void onClick(View v) {
         if (v instanceof Button) {
             Button selectedAnswerButton = (Button) v;
-            String selectedAnswer = selectedAnswerButton.getText().toString();
-            String correctAnswer = trivia.getAnswer();
-            boolean isCorrect = selectedAnswer.equals(correctAnswer);
+            String selectedAnswer = selectedAnswerButton.getText().toString().replace(" ","");
+            String correctAnswer = trivia.getAnswer().replace(" ", "");
+            boolean isCorrect = correctAnswer.contains(selectedAnswer);
 
             String message = isCorrect ? "Correct" : "Incorrect";
-            displayToastMessage(message);
+            String finalMessage = message + " " + this.trivia.getAnswer();
+            //displayToastMessage(Boolean.toString(isCorrect));
+            displayToastMessage(finalMessage);
         }
     }
 
@@ -89,9 +94,9 @@ public class TrickController implements View.OnClickListener {
         questionText.setText(trivia.getQuestion());
 
         // Set answer choices on buttons
-        String[] answerChoices = trivia.getAnswerChoices();
-        answerButton1.setText(answerChoices[0]);
-        answerButton2.setText(answerChoices[1]);
-        answerButton3.setText(answerChoices[2]);
+        ArrayList<String> answerChoices = trivia.getAnswerChoices();
+        answerButton1.setText(answerChoices.get(0));
+        answerButton2.setText(answerChoices.get(1));
+        answerButton3.setText(answerChoices.get(2));
     }
 }

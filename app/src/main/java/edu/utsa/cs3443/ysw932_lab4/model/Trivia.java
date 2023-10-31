@@ -8,29 +8,20 @@ import java.io.*;
 public class Trivia {
 
     private String question;
-    private String[] answerChoices;
+    private ArrayList<String> answerChoices;
     private String answer;
-    private ArrayList<Trivia> triviaFile;
-    public Trivia(String question, String[] answerChoices, String answer) {
-        this.question = question;
-        this.answerChoices = answerChoices;
-        this.answer = answer;
-
-    }
 
     public Trivia() {
-        this.triviaFile = new ArrayList<Trivia>();
+        this.answerChoices = new ArrayList<>();
     }
 
-    public void addTrivia(String question, String[] answerChoices, String answer) {
-        Trivia trivia = new Trivia(question, answerChoices, answer);
-        triviaFile.add(trivia);
-    }
 
     //method which takes in a file name and stores 1 piece of trivia from that file
     public void loadTrivia(AssetManager manager) {
+        ArrayList<String> questionPool = new ArrayList<>();
         Scanner scan = null;
         InputStream inputStream;
+        int randomNumber = new Random().nextInt(10);
 //        ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
         try {
             inputStream = manager.open("trivia.csv");
@@ -38,18 +29,30 @@ public class Trivia {
 
             while (scan.hasNextLine()) {
                 String line = scan.nextLine();
-                String[] tokens = line.split(",");
-
-                String question = tokens[0];
-                String choice1 = tokens[1];
-                String choice2 = tokens[2];
-                String choice3 = tokens[3];
-                String answer = tokens[4];
-
-                String[] answerChoices = {choice1, choice2, choice3};
-                triviaFile.add(new Trivia(question, answerChoices, answer));
-
+                questionPool.add(line);
             }
+
+            String randomTrivia = questionPool.get(randomNumber);
+
+            String[] tokens = randomTrivia.split(",");
+            StringJoiner joined = new StringJoiner("");
+            if(tokens.length > 5) {
+                for(int i = 4; i < tokens.length; i++) {
+                    joined.add(tokens[i]);
+                }
+                tokens[4] = joined.toString();
+            }
+
+            String question = tokens[0];
+            String choice1 = tokens[1];
+            String choice2 = tokens[2];
+            String choice3 = tokens[3];
+            String answer = tokens[4];
+
+            String[] choices = {choice1, choice2, choice3};
+            this.answerChoices = new ArrayList<String>(Arrays.asList(choices));
+            setQuestion(question);
+            setAnswer(answer);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -70,11 +73,11 @@ public class Trivia {
         this.question = question;
     }
 
-    public String[] getAnswerChoices() {
+    public ArrayList<String> getAnswerChoices() {
         return answerChoices;
     }
 
-    public void setAnswerChoices(String[] answerChoices) {
+    public void setAnswerChoices(ArrayList<String> answerChoices) {
         this.answerChoices = answerChoices;
     }
 
@@ -84,13 +87,5 @@ public class Trivia {
 
     public void setAnswer(String answer) {
         this.answer = answer;
-    }
-
-    public ArrayList<Trivia> getTriviaFile() {
-        return triviaFile;
-    }
-
-    public void setTriviaFile(ArrayList<Trivia> triviaFile) {
-       this.triviaFile = triviaFile;
     }
 }
